@@ -1,0 +1,41 @@
+name: Claude Review
+
+# Dynamic, agent-driven review: Claude reads each PR diff and decides what to
+# check, rather than running a fixed script. Authenticated via the Claude GitHub
+# App (OAuth token stored as the CLAUDE_CODE_OAUTH_TOKEN repo secret).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Claude code review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Review pull request
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Review the changes in this pull request and keep the bar high.
+            Prioritise, in order:
+              1. Correctness bugs and logic errors.
+              2. Security & privacy. This project handles Hilan login sessions,
+                 cookies, OTP codes and personal payslip PDFs. Flag anything that
+                 could leak credentials or PII, persist secrets to disk, or weaken
+                 the "nothing sensitive is stored" guarantee.
+              3. Simplicity, reuse and readability.
+            Leave concise inline comments for concrete findings. If the PR is
+            clean, say so briefly. Don't nitpick formatting.

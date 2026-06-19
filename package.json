@@ -1,0 +1,20 @@
+{
+  "name": "hilan-orchestrator",
+  "version": "0.1.0",
+  "description": "Automate self-service tasks on your own Hilan account — starting with bulk payslip downloads.",
+  "type": "module",
+  "bin": {
+    "hilan": "bin/hilan.mjs"
+  },
+  "scripts": {
+    "payslips": "node bin/hilan.mjs payslips",
+    "check": "find bin src -name '*.mjs' -print0 | xargs -0 -n1 node --check"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.61.0"
+  }
+}

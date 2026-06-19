@@ -1,0 +1,10 @@
+# Sensitive: live Hilan session cookies — never commit
+.hilan-auth.json
+
+# Personal documents the tools download
+payslips/
+*.pdf
+
+# Tooling / noise
+node_modules/
+.DS_Store
